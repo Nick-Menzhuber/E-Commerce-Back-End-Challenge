@@ -3,9 +3,8 @@ const { Tag, Product, ProductTag } = require("../../models");
 
 // The `/api/tags` endpoint
 
+//route to get all tags along with associated product information
 router.get("/", (req, res) => {
-  // find all tags
-  // be sure to include its associated Product data
   Tag.findAll({
     include: {
       model: Product,
@@ -19,9 +18,8 @@ router.get("/", (req, res) => {
     });
 });
 
+//route to get a specific tag by its id along with associated product information
 router.get("/:id", (req, res) => {
-  // find a single tag by its `id`
-  // be sure to include its associated Product data
   Tag.findOne({
     where: {
       id: req.params.id,
@@ -38,42 +36,41 @@ router.get("/:id", (req, res) => {
     });
 });
 
+//route to create a new tag, sending the newly created row as a JSON object
 router.post("/", (req, res) => {
-  // create a new tag
   Tag.create({
     tag_name: req.body.tag_name
   })
     .then((newTag) => {
-      // Send the newly created row as a JSON object
       res.json(newTag);
     })
     .catch((err) => {
-      res.json(err);
+      res.status(500).json(err);
     });
 });
 
+//route to update a tag by its id value, getting the tag by the id in request params and sending the updated tag as a JSON response
 router.put("/:id", (req, res) => {
-  // update a tag's name by its `id` value
   Tag.update(
     {
       tag_name: req.body.tag_name,
     },
     {
-      // Gets the category based on the id given in the request parameters
       where: {
         id: req.params.id,
       },
     }
   )
     .then((updatedTag) => {
-      // Sends the updated category as a json response
       res.json(updatedTag);
     })
-    .catch((err) => res.json(err));
+    .catch((err) => {
+      res.status(500).json(err);
+    });
 });
 
+//route to delete a tag by its id value, getting the tag by the id in the request params and sending the deleted tag as a JSON response
 router.delete("/:id", (req, res) => {
-  // delete on tag by its `id` value
   Tag.destroy({
     where: {
       id: req.params.id,
@@ -82,7 +79,9 @@ router.delete("/:id", (req, res) => {
     .then((deletedTag) => {
       res.json(deletedTag);
     })
-    .catch((err) => res.json(err));
+    .catch((err) => {
+      res.status(500).json(err);
+    });
 });
 
 module.exports = router;
